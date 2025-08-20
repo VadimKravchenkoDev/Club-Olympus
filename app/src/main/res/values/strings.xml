@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Club Olympus</string>
+    <string name="save_member">Save Member</string>
+    <string name="delete_member">Delete Member</string>
 </resources>
