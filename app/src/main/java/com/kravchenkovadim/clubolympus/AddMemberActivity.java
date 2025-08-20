@@ -18,6 +18,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.MemberEntry;
+
 
 public class AddMemberActivity extends AppCompatActivity {
     private EditText firstNameEditText;
@@ -53,11 +55,11 @@ public class AddMemberActivity extends AppCompatActivity {
                 String selectedGender = (String) parent.getItemAtPosition(position);
                 if(!TextUtils.isEmpty(selectedGender)){
                     if(selectedGender.equals("Male")){
-                        gender = 1;
+                        gender = MemberEntry.GENDER_MALE;
                     } else if(selectedGender.equals("Female")){
-                        gender = 2;
+                        gender = MemberEntry.GENDER_FEMALE;
                     } else {
-                        gender = 0;
+                        gender = MemberEntry.GENDER_UNKNOWN;
                     }
                 }
             }
