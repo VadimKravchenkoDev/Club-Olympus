@@ -45,6 +45,8 @@ public class OlympusContentProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor;
+        // content://com.android.uraal.clubolympus/members/34
+        // projection = { "lastName", "gender" }
         int match = sURIMatcher.match(uri);
 
         switch (match) {
