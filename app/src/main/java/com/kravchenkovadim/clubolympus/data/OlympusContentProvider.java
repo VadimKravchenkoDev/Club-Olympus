@@ -88,7 +88,6 @@ public class OlympusContentProvider extends ContentProvider {
                     return null;
                 }
                 return  ContentUris.withAppendedId(uri,id);
-                break;
             default:
                 throw new IllegalArgumentException("Insertion of data in the table failed for " + uri);
         }
