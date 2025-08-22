@@ -1,8 +1,14 @@
 package com.kravchenkovadim.clubolympus.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 public final class ClubOlympusContract {
+
+    public static final String SCHEME ="content://";
+    public static final String AUTHORITY = "com.kravchenkovadim.clubolympus";
+    public static final String PATH_MEMBERS = "members";
+    public static final Uri BASE_CONTENT_URI = Uri.parse(SCHEME+AUTHORITY);
     private ClubOlympusContract() {
     }
 
@@ -21,6 +27,12 @@ public final class ClubOlympusContract {
         public static final int GENDER_UNKNOWN = 0;
         public static final int GENDER_MALE = 1;
         public static final int GENDER_FEMALE = 2;
+
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_MEMBERS);
+
+
+
     }
 }
 

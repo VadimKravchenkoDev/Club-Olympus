@@ -13,5 +13,4 @@
         android:title="@string/delete_member"
         app:showAsAction="never"/>
 
-
 </menu>
