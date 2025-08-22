@@ -100,7 +100,23 @@ public class OlympusContentProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        int match = sURIMatcher.match(uri);
+
+        switch (match) {
+            case MEMBERS:
+                return db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+
+            case MEMBER_ID:
+                s = MemberEntry._ID + "=?";
+                strings = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+
+            default:
+                Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
+                throw new IllegalArgumentException("Can't query incorrect URI" + uri);
+        }
     }
 
     @Nullable
