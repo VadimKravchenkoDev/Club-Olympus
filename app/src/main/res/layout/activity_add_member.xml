@@ -94,14 +94,14 @@
         >
 
         <TextView
-            android:text="Group"
+            android:text="sport"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             tools:ignore="Suspicious0dp" />
 
         <EditText
-            android:id="@+id/groupEdit"
+            android:id="@+id/sportEdit"
             android:hint="Group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

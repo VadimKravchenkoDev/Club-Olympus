@@ -1,5 +1,8 @@
 package com.kravchenkovadim.clubolympus;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -9,14 +12,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.MemberEntry;
 
@@ -24,7 +25,7 @@ import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.MemberEntry;
 public class AddMemberActivity extends AppCompatActivity {
     private EditText firstNameEditText;
     private EditText lastNameEditText;
-    private EditText groupNameEditText;
+    private EditText sportNameEditText;
     private Spinner genderSpinner;
     private int gender = 0;
     private ArrayAdapter spinnerAdapter;
@@ -37,7 +38,7 @@ public class AddMemberActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_member);
         firstNameEditText = findViewById(R.id.firstNameEdit);
         lastNameEditText = findViewById(R.id.lastNameEdit);
-        groupNameEditText = findViewById(R.id.groupEdit);
+        sportNameEditText = findViewById(R.id.sportEdit);
         genderSpinner = findViewById(R.id.spinnerID);
 
         spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.array_gender, android.R.layout.simple_spinner_item);
@@ -76,7 +77,7 @@ public class AddMemberActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.save_member) {
-            // saveMember();
+            insertMember();
             return true;
         } else if (id == R.id.delete_member) {
             return true;
@@ -85,5 +86,26 @@ public class AddMemberActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void insertMember (){
+        String firstName = firstNameEditText.getText().toString().trim();
+        String lastName = lastNameEditText.getText().toString().trim();
+        String sport = sportNameEditText.getText().toString().trim();
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(MemberEntry.COLUMN_FIRST_NAME, firstName);
+        contentValues.put(MemberEntry.COLUMN_LAST_NAME, lastName);
+        contentValues.put(MemberEntry.COLUMN_SPORT, sport);
+        contentValues.put(MemberEntry.COLUMN_GENDER, gender);
+
+        ContentResolver  contentResolver = getContentResolver();
+
+        Uri uri = contentResolver.insert(MemberEntry.CONTENT_URI, contentValues);
+
+        if(uri == null){
+            Toast.makeText(this, "Insertion of data in the table failed ", Toast.LENGTH_LONG).show();
+        } else              Toast.makeText(this, "Data saved", Toast.LENGTH_LONG).show();
+
     }
 }

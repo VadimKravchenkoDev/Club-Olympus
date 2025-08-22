@@ -68,8 +68,8 @@ public class OlympusContentProvider extends ContentProvider {
                 Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
                 throw new IllegalArgumentException("Can't query incorrect URI" + uri);
         }
-
-        return null;
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Nullable
