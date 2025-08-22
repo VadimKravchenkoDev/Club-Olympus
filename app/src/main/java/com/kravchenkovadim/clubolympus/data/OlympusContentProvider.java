@@ -1,13 +1,18 @@
 package com.kravchenkovadim.clubolympus.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.*;
 
 public class OlympusContentProvider extends ContentProvider {
 
@@ -22,7 +27,7 @@ public class OlympusContentProvider extends ContentProvider {
         sURIMatcher.addURI(ClubOlympusContract.AUTHORITY, ClubOlympusContract.PATH_MEMBERS,
                 MEMBERS);
 
-        sURIMatcher.addURI(ClubOlympusContract.AUTHORITY, ClubOlympusContract.PATH_MEMBERS+"/#",
+        sURIMatcher.addURI(ClubOlympusContract.AUTHORITY, ClubOlympusContract.PATH_MEMBERS + "/#",
                 MEMBER_ID);
     }
 
@@ -34,7 +39,33 @@ public class OlympusContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection,
+                        @Nullable String selection, @Nullable String[] selectionArgs,
+                        @Nullable String sortOder) {
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor;
+        int match = sURIMatcher.match(uri);
+
+        switch (match) {
+            case MEMBERS:
+                cursor = db.query(MemberEntry.TABLE_NAME, projection, selection,
+                        selectionArgs, null, null, sortOder);
+                break;
+
+            case MEMBER_ID:
+                selection = MemberEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = db.query(MemberEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOder);
+                break;
+            //selection = "_id=?"
+            // selectionArgs = 34
+            default:
+                Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
+                throw new IllegalArgumentException("Can't query incorrect URI" + uri);
+        }
+
         return null;
     }
 
