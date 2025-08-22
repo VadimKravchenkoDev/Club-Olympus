@@ -33,13 +33,8 @@ public class AddMemberActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+
         setContentView(R.layout.activity_add_member);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
         firstNameEditText = findViewById(R.id.firstNameEdit);
         lastNameEditText = findViewById(R.id.lastNameEdit);
         groupNameEditText = findViewById(R.id.groupEdit);

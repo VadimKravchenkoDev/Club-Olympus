@@ -7,14 +7,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AddMemberActivity">
+    tools:context=".AddMemberActivity"
+    >
 
     <LinearLayout
-        android:padding="18dp"
+        android:padding="38dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="3"
+        >
 
         <TextView
             android:text="First name"
@@ -34,11 +36,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:padding="18dp"
+        android:padding="38dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="3"
+        >
 
         <TextView
             android:text="Last name"
@@ -59,11 +62,12 @@
 
 
     <LinearLayout
-        android:padding="18dp"
+        android:padding="38dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="3"
+        >
 
         <TextView
             android:text="Gender"
@@ -82,11 +86,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:padding="18dp"
+        android:padding="38dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="3">
+        android:weightSum="3"
+        >
 
         <TextView
             android:text="Group"
