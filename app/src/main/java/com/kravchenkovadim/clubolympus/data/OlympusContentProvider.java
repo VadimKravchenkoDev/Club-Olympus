@@ -139,6 +139,7 @@ public class OlympusContentProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
+        
         return "";
     }
 }
