@@ -31,7 +31,8 @@ public final class ClubOlympusContract {
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_MEMBERS);
 
-
+        public static final String CONTENT_MULTIPLE_ITEMS = "vnd.android.cursor.dir/"+AUTHORITY+PATH_MEMBERS;
+        public static final String CONTENT_SINGLE_ITEM = "vnd.android.cursor.item/"+AUTHORITY+PATH_MEMBERS;
 
     }
 }
