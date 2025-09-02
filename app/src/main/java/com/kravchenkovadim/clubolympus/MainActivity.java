@@ -4,7 +4,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,14 +15,15 @@ import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView dataTextView;
+    ListView listView;
+    SimpleCursorAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dataTextView = findViewById(R.id.dataTextView);
+        listView = findViewById(R.id.listViewMembers);
 
         FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
 
@@ -53,38 +55,49 @@ public class MainActivity extends AppCompatActivity {
                 projection,
                 null, null, null
         );
-        dataTextView.setText("All members\n\n");
-        dataTextView.append(MemberEntry._ID + " " +
-                MemberEntry.COLUMN_FIRST_NAME + " " +
-                MemberEntry.COLUMN_LAST_NAME + " " +
-                MemberEntry.COLUMN_GENDER + " " +
-                MemberEntry.COLUMN_SPORT);
+        if (cursor == null) return;
 
-        if (cursor == null) {
-            return;
-        }
+        String[] from = new String[]{
+                MemberEntry._ID,
+                MemberEntry.COLUMN_FIRST_NAME,
+                MemberEntry.COLUMN_LAST_NAME,
+                MemberEntry.COLUMN_GENDER,
+                MemberEntry.COLUMN_SPORT
+        };
+        int[] to = new int[]{
+                R.id.tvId,
+                R.id.tvFirstName,
+                R.id.tvLastName,
+                R.id.tvGender,
+                R.id.tvSport
+        };
 
-        int idColumnIndex = cursor.getColumnIndexOrThrow(MemberEntry._ID);
-        int firstNameColumnIndex = cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_FIRST_NAME);
-        int lastNameColumnIndex = cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_LAST_NAME);
-        int genderColumnIndex = cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_GENDER);
-        int sportColumnIndex = cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_SPORT);
+        adapter = new SimpleCursorAdapter(
+                this,
+                R.layout.item_member,
+                cursor,
+                from,
+                to,
+                0
+        );
 
-        while (cursor.moveToNext()) {
-            int currentId = cursor.getInt(idColumnIndex);
-            String currentFirstName = cursor.getString(firstNameColumnIndex);
-            String currentLastName = cursor.getString(lastNameColumnIndex);
-            int currentGender = cursor.getInt(genderColumnIndex);
-            String currentSport = cursor.getString(sportColumnIndex);
+        adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+            @Override
+            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+                int genderIndex = cursor.getColumnIndex(MemberEntry.COLUMN_GENDER);
+                if (columnIndex == genderIndex) {
+                    int genderValue = cursor.getInt(genderIndex);
+                    String genderText;
+                    if (genderValue == MemberEntry.GENDER_MALE) genderText = "Male";
+                    else if (genderValue == MemberEntry.GENDER_FEMALE) genderText = "Female";
+                    else genderText = "Unknown";
+                    ((android.widget.TextView) view).setText(genderText);
+                    return true;
+                }
+                return false;
+            }
+        });
 
-            dataTextView.append("\n\n" +
-                    currentId + " " +
-                    currentFirstName + " " +
-                    currentLastName + " " +
-                    currentGender + " " +
-                    currentSport
-            );
-        }
-        cursor.close();
+        listView.setAdapter(adapter);
     }
 }
