@@ -139,6 +139,34 @@ public class OlympusContentProvider extends ContentProvider {
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
+
+        if (contentValues.containsKey(MemberEntry.COLUMN_FIRST_NAME)) {
+            String firstName = contentValues.getAsString(MemberEntry.COLUMN_FIRST_NAME);
+            if (firstName == null) {
+                throw new IllegalArgumentException("You have to input first name" + uri);
+            }
+        }
+        if (contentValues.containsKey(MemberEntry.COLUMN_LAST_NAME)) {
+            String lastName = contentValues.getAsString(MemberEntry.COLUMN_LAST_NAME);
+            if (lastName == null) {
+                throw new IllegalArgumentException("You have to input last name" + uri);
+            }
+        }
+
+        if (contentValues.containsKey(MemberEntry.COLUMN_GENDER)) {
+            Integer gender = contentValues.getAsInteger(MemberEntry.COLUMN_GENDER);
+            if (gender == null || !(gender == MemberEntry.GENDER_UNKNOWN || gender == MemberEntry.GENDER_MALE || gender == MemberEntry.GENDER_FEMALE)) {
+                throw new IllegalArgumentException("You have to input correct gender" + uri);
+            }
+        }
+
+        if (contentValues.containsKey(MemberEntry.COLUMN_SPORT)) {
+            String sport = contentValues.getAsString(MemberEntry.COLUMN_SPORT);
+            if (sport == null) {
+                throw new IllegalArgumentException("You have to input sport group" + uri);
+            }
+        }
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         int match = sURIMatcher.match(uri);
