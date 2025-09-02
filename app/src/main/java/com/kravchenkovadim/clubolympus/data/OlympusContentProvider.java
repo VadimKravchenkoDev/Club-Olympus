@@ -47,8 +47,6 @@ public class OlympusContentProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor;
-        // content://com.android.uraal.clubolympus/members/34
-        // projection = { "lastName", "gender" }
         int match = sURIMatcher.match(uri);
 
         switch (match) {
@@ -63,8 +61,6 @@ public class OlympusContentProvider extends ContentProvider {
                 cursor = db.query(MemberEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOder);
                 break;
-            //selection = "_id=?"
-            // selectionArgs = 34
             default:
                 Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
                 throw new IllegalArgumentException("Can't query incorrect URI" + uri);

@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,7 +15,7 @@ import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.*;
 public class MainActivity extends AppCompatActivity {
 
     ListView listView;
-    SimpleCursorAdapter adapter;
+    MemberCursorAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,47 +56,7 @@ public class MainActivity extends AppCompatActivity {
         );
         if (cursor == null) return;
 
-        String[] from = new String[]{
-                MemberEntry._ID,
-                MemberEntry.COLUMN_FIRST_NAME,
-                MemberEntry.COLUMN_LAST_NAME,
-                MemberEntry.COLUMN_GENDER,
-                MemberEntry.COLUMN_SPORT
-        };
-        int[] to = new int[]{
-                R.id.tvId,
-                R.id.tvFirstName,
-                R.id.tvLastName,
-                R.id.tvGender,
-                R.id.tvSport
-        };
-
-        adapter = new SimpleCursorAdapter(
-                this,
-                R.layout.item_member,
-                cursor,
-                from,
-                to,
-                0
-        );
-
-        adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                int genderIndex = cursor.getColumnIndex(MemberEntry.COLUMN_GENDER);
-                if (columnIndex == genderIndex) {
-                    int genderValue = cursor.getInt(genderIndex);
-                    String genderText;
-                    if (genderValue == MemberEntry.GENDER_MALE) genderText = "Male";
-                    else if (genderValue == MemberEntry.GENDER_FEMALE) genderText = "Female";
-                    else genderText = "Unknown";
-                    ((android.widget.TextView) view).setText(genderText);
-                    return true;
-                }
-                return false;
-            }
-        });
-
+        adapter = new MemberCursorAdapter(this, cursor);
         listView.setAdapter(adapter);
     }
 }
