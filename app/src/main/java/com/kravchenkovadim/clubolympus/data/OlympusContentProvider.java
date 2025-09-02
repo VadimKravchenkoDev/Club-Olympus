@@ -3,6 +3,7 @@ package com.kravchenkovadim.clubolympus.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -76,18 +77,39 @@ public class OlympusContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
 
+        String firstName = contentValues.getAsString(MemberEntry.COLUMN_FIRST_NAME);
+        if (firstName == null) {
+            throw new IllegalArgumentException("You have to input first name" + uri);
+        }
+
+        String lastName = contentValues.getAsString(MemberEntry.COLUMN_LAST_NAME);
+        if (lastName == null) {
+            throw new IllegalArgumentException("You have to input last name" + uri);
+        }
+
+        Integer gender = contentValues.getAsInteger(MemberEntry.COLUMN_GENDER);
+        if (gender == null || !(gender == MemberEntry.GENDER_UNKNOWN || gender == MemberEntry.GENDER_MALE || gender == MemberEntry.GENDER_FEMALE)) {
+            throw new IllegalArgumentException("You have to input correct gender" + uri);
+        }
+
+        String sport = contentValues.getAsString(MemberEntry.COLUMN_SPORT);
+        if (sport == null) {
+            throw new IllegalArgumentException("You have to input sport group" + uri);
+        }
+
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int match = sURIMatcher.match(uri);
 
         switch (match) {
             case MEMBERS:
-               long id=  db.insert(MemberEntry.TABLE_NAME, null, contentValues);
-                if(id == -1){
+                long id = db.insert(MemberEntry.TABLE_NAME, null, contentValues);
+                if (id == -1) {
                     Log.e("insertMethod", "Insertion of data in the table failed for "
-                    + uri);
+                            + uri);
                     return null;
                 }
-                return  ContentUris.withAppendedId(uri,id);
+                return ContentUris.withAppendedId(uri, id);
             default:
                 throw new IllegalArgumentException("Insertion of data in the table failed for " + uri);
         }
