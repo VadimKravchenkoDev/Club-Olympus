@@ -12,24 +12,22 @@ import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.MemberEntry;
 
 public class MemberCursorAdapter extends CursorAdapter {
 
-    private final LayoutInflater layoutInflater;
-
     public MemberCursorAdapter(Context context, Cursor c) {
         super(context, c, 0);
-        this.layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = layoutInflater.inflate(R.layout.item_member, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        view.setTag(holder);
-        return view;
+        return LayoutInflater.from(context).inflate(R.layout.item_member, parent, false);
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        ViewHolder holder = (ViewHolder) view.getTag();
+        TextView tvId = view.findViewById(R.id.tvId);
+        TextView tvFirstName = view.findViewById(R.id.tvFirstName);
+        TextView tvLastName = view.findViewById(R.id.tvLastName);
+        TextView tvGender = view.findViewById(R.id.tvGender);
+        TextView tvSport = view.findViewById(R.id.tvSport);
 
         int id = cursor.getInt(cursor.getColumnIndexOrThrow(MemberEntry._ID));
         String firstName = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_FIRST_NAME));
@@ -37,33 +35,17 @@ public class MemberCursorAdapter extends CursorAdapter {
         int gender = cursor.getInt(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_GENDER));
         String sport = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_SPORT));
 
-        holder.tvId.setText(String.valueOf(id));
-        holder.tvFirstName.setText(firstName);
-        holder.tvLastName.setText(lastName);
-        holder.tvGender.setText(genderToText(gender));
-        holder.tvSport.setText(sport);
+        tvId.setText(String.valueOf(id));
+        tvFirstName.setText(firstName);
+        tvLastName.setText(lastName);
+        tvGender.setText(genderToText(gender));
+        tvSport.setText(sport);
     }
 
     private String genderToText(int genderValue) {
         if (genderValue == MemberEntry.GENDER_MALE) return "Male";
         if (genderValue == MemberEntry.GENDER_FEMALE) return "Female";
         return "Unknown";
-    }
-
-    private static class ViewHolder {
-        final TextView tvId;
-        final TextView tvFirstName;
-        final TextView tvLastName;
-        final TextView tvGender;
-        final TextView tvSport;
-
-        ViewHolder(View root) {
-            this.tvId = root.findViewById(R.id.tvId);
-            this.tvFirstName = root.findViewById(R.id.tvFirstName);
-            this.tvLastName = root.findViewById(R.id.tvLastName);
-            this.tvGender = root.findViewById(R.id.tvGender);
-            this.tvSport = root.findViewById(R.id.tvSport);
-        }
     }
 }
 
