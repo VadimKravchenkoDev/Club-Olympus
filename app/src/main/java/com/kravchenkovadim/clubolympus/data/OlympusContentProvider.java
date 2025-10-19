@@ -76,16 +76,6 @@ public class OlympusContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
 
-        String firstName = contentValues.getAsString(MemberEntry.COLUMN_FIRST_NAME);
-        if(firstName==null){
-            throw new IllegalArgumentException("You have to input first name " + uri);
-        }
-
-        String lastName = contentValues.getAsString(MemberEntry.COLUMN_LAST_NAME);
-        if(firstName==null){
-            throw new IllegalArgumentException("You have to input first name " + uri);
-        }
-
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int match = sURIMatcher.match(uri);
 
