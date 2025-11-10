@@ -6,23 +6,29 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.kravchenkovadim.clubolympus.data.ClubOlympusContract;
 import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    ListView listView;
-    MemberCursorAdapter adapter;
+    private static final int MEMBER_LOADER=555;
+    ListView dataListView;
+    MemberCursorAdapter memberCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = findViewById(R.id.listViewMembers);
+        dataListView = findViewById(R.id.listViewMembers);
 
         FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
 
@@ -33,15 +39,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        memberCursorAdapter = new MemberCursorAdapter(this, null);
+        dataListView.setAdapter(memberCursorAdapter);
+        getSupportLoaderManager().initLoader(MEMBER_LOADER, null,this);
     }
 
+    @NonNull
     @Override
-    protected void onStart() {
-        super.onStart();
-        displayData();
-    }
-
-    private void displayData() {
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         String[] projection = {
                 MemberEntry._ID,
                 MemberEntry.COLUMN_FIRST_NAME,
@@ -49,14 +54,24 @@ public class MainActivity extends AppCompatActivity {
                 MemberEntry.COLUMN_GENDER,
                 MemberEntry.COLUMN_SPORT
         };
-        Cursor cursor = getContentResolver().query(
+        CursorLoader cursorLoader = new CursorLoader(this,
                 MemberEntry.CONTENT_URI,
                 projection,
                 null, null, null
         );
-        if (cursor == null) return;
 
-        adapter = new MemberCursorAdapter(this, cursor);
-        listView.setAdapter(adapter);
+
+
+        return cursorLoader;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        memberCursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        memberCursorAdapter.swapCursor(null);
     }
 }
