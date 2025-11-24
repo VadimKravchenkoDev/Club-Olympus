@@ -69,6 +69,7 @@ public class OlympusContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Can't query incorrect URI" + uri);
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
@@ -87,6 +88,7 @@ public class OlympusContentProvider extends ContentProvider {
                     + uri);
                     return null;
                 }
+                getContext().getContentResolver().notifyChange(uri,null);
                 return  ContentUris.withAppendedId(uri,id);
             default:
                 throw new IllegalArgumentException("Insertion of data in the table failed for " + uri);
@@ -100,19 +102,25 @@ public class OlympusContentProvider extends ContentProvider {
 
         int match = sURIMatcher.match(uri);
 
+        int rowsDelete;
+
         switch (match) {
             case MEMBERS:
-                return db.delete(MemberEntry.TABLE_NAME, s, strings);
-
+                rowsDelete = db.delete(MemberEntry.TABLE_NAME, s, strings);
+                break;
             case MEMBER_ID:
                 s = MemberEntry._ID + "=?";
                 strings = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(MemberEntry.TABLE_NAME, s, strings);
-
+                rowsDelete = db.delete(MemberEntry.TABLE_NAME, s, strings);
+                break;
             default:
                 Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
                 throw new IllegalArgumentException("Can't delete this URI" + uri);
         }
+        if(rowsDelete != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDelete;
     }
 
     @Override
@@ -120,20 +128,32 @@ public class OlympusContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         int match = sURIMatcher.match(uri);
+        int rowsUpdated;
 
         switch (match) {
             case MEMBERS:
-                return db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
 
+
+                break;
             case MEMBER_ID:
                 s = MemberEntry._ID + "=?";
                 strings = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+                if(rowsUpdated !=0){
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
+
+                break;
 
             default:
                 Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
                 throw new IllegalArgumentException("Can't update this URI" + uri);
         }
+        if(rowsUpdated !=0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Nullable
