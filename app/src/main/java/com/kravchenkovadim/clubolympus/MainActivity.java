@@ -1,9 +1,12 @@
 package com.kravchenkovadim.clubolympus;
 
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +31,15 @@ implements LoaderManager.LoaderCallbacks<Cursor> {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = getIntent();
+
+        Uri currentMemberUri = intent.getData();
+
+        if(currentMemberUri == null){
+            setTitle("Add a Member");
+        } else {
+            setTitle("Edit the Member");
+        }
         dataListView = findViewById(R.id.listViewMembers);
 
         FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
@@ -41,6 +53,18 @@ implements LoaderManager.LoaderCallbacks<Cursor> {
         });
         memberCursorAdapter = new MemberCursorAdapter(this, null);
         dataListView.setAdapter(memberCursorAdapter);
+
+        dataListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this,
+                        AddMemberActivity.class);
+                Uri currentMemberUri = ContentUris.withAppendedId(
+                        MemberEntry.CONTENT_URI, id);
+                intent.setData(currentMemberUri);
+                startActivity(intent);
+            }
+        });
         getSupportLoaderManager().initLoader(MEMBER_LOADER, null,this);
     }
 

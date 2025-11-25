@@ -133,17 +133,11 @@ public class OlympusContentProvider extends ContentProvider {
         switch (match) {
             case MEMBERS:
                 rowsUpdated = db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
-
-
                 break;
             case MEMBER_ID:
                 s = MemberEntry._ID + "=?";
                 strings = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 rowsUpdated = db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
-                if(rowsUpdated !=0){
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-
                 break;
 
             default:
