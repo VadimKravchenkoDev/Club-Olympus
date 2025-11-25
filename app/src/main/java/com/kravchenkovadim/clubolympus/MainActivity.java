@@ -84,8 +84,6 @@ implements LoaderManager.LoaderCallbacks<Cursor> {
                 null, null, null
         );
 
-
-
         return cursorLoader;
     }
 
