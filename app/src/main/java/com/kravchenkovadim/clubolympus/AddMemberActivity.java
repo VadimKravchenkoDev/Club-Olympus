@@ -164,6 +164,26 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
             int sportColumnIndex = data.getColumnIndex(
                     MemberEntry.COLUMN_SPORT
             );
+            String firstName = data.getString(firstNameColumnIndex);
+            String lastName = data.getString(lastNameColumnIndex);
+            int gender = data.getInt(genderColumnIndex);
+            String sport = data.getString(sportColumnIndex);
+
+            firstNameEditText.setText(firstName);
+            lastNameEditText.setText(lastName);
+            sportNameEditText.setText(sport);
+
+            switch (gender){
+                case MemberEntry.GENDER_MALE:
+                    genderSpinner.setSelection(1);
+                    break;
+                case MemberEntry.GENDER_FEMALE:
+                    genderSpinner.setSelection(2);
+                    break;
+                case MemberEntry.GENDER_UNKNOWN:
+                    genderSpinner.setSelection(0);
+                    break;
+            }
         }
     }
 
