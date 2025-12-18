@@ -152,7 +152,18 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         if(data.moveToFirst()){
-            int first
+            int firstNameColumnIndex = data.getColumnIndex(
+                    MemberEntry.COLUMN_FIRST_NAME
+            );
+            int lastNameColumnIndex = data.getColumnIndex(
+                    MemberEntry.COLUMN_LAST_NAME
+            );
+            int genderColumnIndex = data.getColumnIndex(
+                    MemberEntry.COLUMN_GENDER
+            );
+            int sportColumnIndex = data.getColumnIndex(
+                    MemberEntry.COLUMN_SPORT
+            );
         }
     }
 
