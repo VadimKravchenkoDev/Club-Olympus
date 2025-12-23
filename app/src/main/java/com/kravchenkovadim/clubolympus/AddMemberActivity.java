@@ -52,6 +52,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
             setTitle("Add a Member");
         } else {
             setTitle("Edit the Member");
+            getSupportLoaderManager().initLoader(EDIT_MEMBER_LOADER, null, this);
         }
 
         firstNameEditText = findViewById(R.id.firstNameEdit);
@@ -84,8 +85,6 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
             }
         });
 
-        getSupportLoaderManager().initLoader(EDIT_MEMBER_LOADER, null, this);
-
     }
 
     @Override
@@ -114,6 +113,20 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
         String lastName = lastNameEditText.getText().toString().trim();
         String sport = sportNameEditText.getText().toString().trim();
 
+        if (TextUtils.isEmpty(firstName)){
+            Toast.makeText(this, "Input the first name ", Toast.LENGTH_LONG).show();
+            return;
+        }
+        else if (TextUtils.isEmpty(lastName)){
+            Toast.makeText(this, "Input the last name ", Toast.LENGTH_LONG).show();
+            return;
+        } else if (TextUtils.isEmpty(sport)){
+            Toast.makeText(this, "Input the sport ", Toast.LENGTH_LONG).show();
+            return;
+        }else if (gender==MemberEntry.GENDER_UNKNOWN){
+            Toast.makeText(this, "Choose the gender ", Toast.LENGTH_LONG).show();
+            return;
+        }
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(MemberEntry.COLUMN_FIRST_NAME, firstName);
