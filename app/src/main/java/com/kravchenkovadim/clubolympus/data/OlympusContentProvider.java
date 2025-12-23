@@ -3,7 +3,6 @@ package com.kravchenkovadim.clubolympus.data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -47,6 +46,8 @@ public class OlympusContentProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor;
+        // content://com.android.uraal.clubolympus/members/34
+        // projection = { "lastName", "gender" }
         int match = sURIMatcher.match(uri);
 
         switch (match) {
@@ -61,11 +62,14 @@ public class OlympusContentProvider extends ContentProvider {
                 cursor = db.query(MemberEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOder);
                 break;
+            //selection = "_id=?"
+            // selectionArgs = 34
             default:
                 Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
                 throw new IllegalArgumentException("Can't query incorrect URI" + uri);
         }
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
@@ -73,39 +77,19 @@ public class OlympusContentProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
 
-        String firstName = contentValues.getAsString(MemberEntry.COLUMN_FIRST_NAME);
-        if (firstName == null) {
-            throw new IllegalArgumentException("You have to input first name" + uri);
-        }
-
-        String lastName = contentValues.getAsString(MemberEntry.COLUMN_LAST_NAME);
-        if (lastName == null) {
-            throw new IllegalArgumentException("You have to input last name" + uri);
-        }
-
-        Integer gender = contentValues.getAsInteger(MemberEntry.COLUMN_GENDER);
-        if (gender == null || !(gender == MemberEntry.GENDER_UNKNOWN || gender == MemberEntry.GENDER_MALE || gender == MemberEntry.GENDER_FEMALE)) {
-            throw new IllegalArgumentException("You have to input correct gender" + uri);
-        }
-
-        String sport = contentValues.getAsString(MemberEntry.COLUMN_SPORT);
-        if (sport == null) {
-            throw new IllegalArgumentException("You have to input sport group" + uri);
-        }
-
-
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int match = sURIMatcher.match(uri);
 
         switch (match) {
             case MEMBERS:
-                long id = db.insert(MemberEntry.TABLE_NAME, null, contentValues);
-                if (id == -1) {
+               long id=  db.insert(MemberEntry.TABLE_NAME, null, contentValues);
+                if(id == -1){
                     Log.e("insertMethod", "Insertion of data in the table failed for "
-                            + uri);
+                    + uri);
                     return null;
                 }
-                return ContentUris.withAppendedId(uri, id);
+                getContext().getContentResolver().notifyChange(uri,null);
+                return  ContentUris.withAppendedId(uri,id);
             default:
                 throw new IllegalArgumentException("Insertion of data in the table failed for " + uri);
         }
@@ -118,68 +102,52 @@ public class OlympusContentProvider extends ContentProvider {
 
         int match = sURIMatcher.match(uri);
 
+        int rowsDelete;
+
         switch (match) {
             case MEMBERS:
-                return db.delete(MemberEntry.TABLE_NAME, s, strings);
-
+                rowsDelete = db.delete(MemberEntry.TABLE_NAME, s, strings);
+                break;
             case MEMBER_ID:
                 s = MemberEntry._ID + "=?";
                 strings = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(MemberEntry.TABLE_NAME, s, strings);
-
+                rowsDelete = db.delete(MemberEntry.TABLE_NAME, s, strings);
+                break;
             default:
                 Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
                 throw new IllegalArgumentException("Can't delete this URI" + uri);
         }
+        if(rowsDelete != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsDelete;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-
-        if (contentValues.containsKey(MemberEntry.COLUMN_FIRST_NAME)) {
-            String firstName = contentValues.getAsString(MemberEntry.COLUMN_FIRST_NAME);
-            if (firstName == null) {
-                throw new IllegalArgumentException("You have to input first name" + uri);
-            }
-        }
-        if (contentValues.containsKey(MemberEntry.COLUMN_LAST_NAME)) {
-            String lastName = contentValues.getAsString(MemberEntry.COLUMN_LAST_NAME);
-            if (lastName == null) {
-                throw new IllegalArgumentException("You have to input last name" + uri);
-            }
-        }
-
-        if (contentValues.containsKey(MemberEntry.COLUMN_GENDER)) {
-            Integer gender = contentValues.getAsInteger(MemberEntry.COLUMN_GENDER);
-            if (gender == null || !(gender == MemberEntry.GENDER_UNKNOWN || gender == MemberEntry.GENDER_MALE || gender == MemberEntry.GENDER_FEMALE)) {
-                throw new IllegalArgumentException("You have to input correct gender" + uri);
-            }
-        }
-
-        if (contentValues.containsKey(MemberEntry.COLUMN_SPORT)) {
-            String sport = contentValues.getAsString(MemberEntry.COLUMN_SPORT);
-            if (sport == null) {
-                throw new IllegalArgumentException("You have to input sport group" + uri);
-            }
-        }
-
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         int match = sURIMatcher.match(uri);
+        int rowsUpdated;
 
         switch (match) {
             case MEMBERS:
-                return db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
-
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+                break;
             case MEMBER_ID:
                 s = MemberEntry._ID + "=?";
                 strings = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+                rowsUpdated = db.update(MemberEntry.TABLE_NAME, contentValues, s, strings);
+                break;
 
             default:
                 Toast.makeText(getContext(), "Incorrect URI", Toast.LENGTH_LONG).show();
                 throw new IllegalArgumentException("Can't update this URI" + uri);
         }
+        if(rowsUpdated !=0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return rowsUpdated;
     }
 
     @Nullable
