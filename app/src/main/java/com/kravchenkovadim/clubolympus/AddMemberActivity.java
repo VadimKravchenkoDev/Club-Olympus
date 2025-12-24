@@ -33,7 +33,7 @@ import com.kravchenkovadim.clubolympus.data.ClubOlympusContract.MemberEntry;
 public class AddMemberActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int EDIT_MEMBER_LOADER = 111;
-    Uri currentMemberUri ;
+    Uri currentMemberUri;
     private EditText firstNameEditText;
     private EditText lastNameEditText;
     private EditText sportNameEditText;
@@ -50,7 +50,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
         Intent intent = getIntent();
 
         currentMemberUri = intent.getData();
-        if(currentMemberUri == null){
+        if (currentMemberUri == null) {
             setTitle("Add a Member");
         } else {
             setTitle("Edit the Member");
@@ -90,6 +90,16 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(currentMemberUri == null){
+            MenuItem menuItem = menu.findItem(R.id.delete_member);
+            menuItem.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_member_menu, menu);
         return true;
@@ -112,23 +122,21 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
     }
 
 
-
     private void saveMember() {
         String firstName = firstNameEditText.getText().toString().trim();
         String lastName = lastNameEditText.getText().toString().trim();
         String sport = sportNameEditText.getText().toString().trim();
 
-        if (TextUtils.isEmpty(firstName)){
+        if (TextUtils.isEmpty(firstName)) {
             Toast.makeText(this, "Input the first name ", Toast.LENGTH_LONG).show();
             return;
-        }
-        else if (TextUtils.isEmpty(lastName)){
+        } else if (TextUtils.isEmpty(lastName)) {
             Toast.makeText(this, "Input the last name ", Toast.LENGTH_LONG).show();
             return;
-        } else if (TextUtils.isEmpty(sport)){
+        } else if (TextUtils.isEmpty(sport)) {
             Toast.makeText(this, "Input the sport ", Toast.LENGTH_LONG).show();
             return;
-        }else if (gender==MemberEntry.GENDER_UNKNOWN){
+        } else if (gender == MemberEntry.GENDER_UNKNOWN) {
             Toast.makeText(this, "Choose the gender ", Toast.LENGTH_LONG).show();
             return;
         }
@@ -139,7 +147,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
         contentValues.put(MemberEntry.COLUMN_SPORT, sport);
         contentValues.put(MemberEntry.COLUMN_GENDER, gender);
 
-        if(currentMemberUri==null){
+        if (currentMemberUri == null) {
             ContentResolver contentResolver = getContentResolver();
             Uri uri = contentResolver.insert(MemberEntry.CONTENT_URI, contentValues);
 
@@ -150,7 +158,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
             int rowsChanged = getContentResolver().update(currentMemberUri, contentValues,
                     null, null);
 
-            if (rowsChanged==0){
+            if (rowsChanged == 0) {
                 Toast.makeText(this, "Saving of data in the table failed ", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Member updated", Toast.LENGTH_LONG).show();
@@ -180,7 +188,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        if(data.moveToFirst()){
+        if (data.moveToFirst()) {
             int firstNameColumnIndex = data.getColumnIndex(
                     MemberEntry.COLUMN_FIRST_NAME
             );
@@ -202,7 +210,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
             lastNameEditText.setText(lastName);
             sportNameEditText.setText(sport);
 
-            switch (gender){
+            switch (gender) {
                 case MemberEntry.GENDER_MALE:
                     genderSpinner.setSelection(1);
                     break;
@@ -218,7 +226,6 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-
     }
 
     private void showDeleteMemberDialog() {
@@ -234,7 +241,7 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if(dialogInterface!= null){
+                        if (dialogInterface != null) {
                             dialogInterface.dismiss();
                         }
                     }
@@ -242,16 +249,15 @@ public class AddMemberActivity extends AppCompatActivity implements LoaderManage
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-    private void deleteMember(){
-        if(currentMemberUri != null){
-            int rowsDeleted = getContentResolver().delete(currentMemberUri,
-                    null,null);
 
-            if(rowsDeleted ==0){
+    private void deleteMember() {
+        if (currentMemberUri != null) {
+            int rowsDeleted = getContentResolver().delete(currentMemberUri,
+                    null, null);
+            if (rowsDeleted == 0) {
                 Toast.makeText(this, "Deleting of data from the table failed ", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Member is deleting ", Toast.LENGTH_LONG).show();
-
             }
         }
         finish();
